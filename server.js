@@ -2,7 +2,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 var bcrypt = require("bcryptjs");
 require('./server/models/database');
-require('./server/controllers/cotroller');
 
 const Post = require('./server/models/posts') ;
 const User = require('./server/models/user') ;
@@ -78,7 +77,7 @@ User.findOne({
 // Middleware function to verify JWT
 const verifyToken = (req, res, next) => {
   const bearerHeader = req.headers.authorization;
-  console.log( bearerHeader);
+  // console.log( bearerHeader);
 
   if (typeof bearerHeader !== 'undefined') {
     const bearer = bearerHeader.split(' ');
@@ -143,6 +142,7 @@ app.post('/api/createpost', verifyToken, (req, res) => {
       });
      Post.findOne( {title: req.body.title,description: req.body.description, createdBy:authData.username},(error, post) => {
      let postid=post._id;
+     
       res.status(200).send({ message: 'Post created successfully', postid });
     });
       
@@ -150,15 +150,16 @@ app.post('/api/createpost', verifyToken, (req, res) => {
   });
   
   // Route for updating an existing blog post
-app.put('/api/post', verifyToken, (req, res) => {
- const id=req.params.id;
+app.put('/api/post/:id', verifyToken, (req, res) => {
+ const id=req.params['id'];
+ console.log(id);
   const token = req.headers.authorization.split(" ")[1];
 
     jwt.verify(token, "mysecret", (err, authData) => {
       if (err) {
         return res.status(403).send({ message: 'Forbidden' });
       }
-  if(req.user.usermame === req.body.createdBy){
+  // if(req.user.username === req.body.createdBy){
     Post.findByIdAndUpdate(id, { title:req.body.title ,description:req.body.description }, { new: true }, (error, post) => {
       if (error) {
         return res.status(400).send({ message: 'Error updating post' });
@@ -166,25 +167,25 @@ app.put('/api/post', verifyToken, (req, res) => {
 
       res.status(200).send({ message: 'Post updated successfully', authData });
     });
-  }
-  else {
-    return res.status(400).send({ message: 'Not Autheticated' }); 
-  }
+  // }
+  // else {
+  //   return res.status(400).send({ message: 'Not Autheticated' }); 
+  // }
 
     });
   
   });
 
 //   Route for deleting an existing blog post
-app.delete('/api/post', verifyToken, (req, res) => {
-  const id2=req.params.id;
+app.delete('/api/post/:id', verifyToken, (req, res) => {
+  const id2=req.params['id'];
   const token = req.headers.authorization.split(" ")[1];
 
     jwt.verify(token, "mysecret", (err, authData) => {
       if (err) {
         return res.status(403).send({ message: 'Forbidden' });
       }
-      if(req.user.usermame === req.body.createdBy){
+      // if(req.user.username === req.body.createdBy){
         Post.findByIdAndDelete(id2, (error, post) => {
           if (error) {
             return res.status(400).send({ message: 'Error deleting post' });
@@ -192,10 +193,10 @@ app.delete('/api/post', verifyToken, (req, res) => {
     
           res.status(200).send({ message: 'Post deleted successfully', authData });
         });
-      }
-      else{
-        return res.status(400).send({ message: 'Not Autheticated' }); 
-      }
+      // }
+      // else{
+      //   return res.status(400).send({ message: 'Not Autheticated' }); 
+      // }
      
     });
   });
