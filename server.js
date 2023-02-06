@@ -1,7 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-var bcrypt = require("bcryptjs");
+const bcrypt = require("bcryptjs");
 require('./server/models/database');
+const cors=require('cors');
 
 const Post = require('./server/models/posts') ;
 const User = require('./server/models/user') ;
@@ -9,7 +10,13 @@ const jwt = require('jsonwebtoken');
 
 const app = express();
 app.use(express.json());
+app.use(cors());
+const port = process.env.PORT || 3000;
+require('dotenv').config();
 
+app.get('/', (req, res) => {
+  return res.send("to use blog api backend use a service like postman ");
+  });
 
 
 app.post('/api/register', (req, res) => {
@@ -201,6 +208,6 @@ app.delete('/api/post/:id', verifyToken, (req, res) => {
     });
   });
 
-  module.exports= app.listen(3000, () => {
+  module.exports= app.listen(port, () => {
     console.log('Server started on port 3000');
   });

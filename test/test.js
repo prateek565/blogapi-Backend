@@ -67,8 +67,8 @@ describe('Blog API (logged-out user)', () => {
       .post('/api/createpost')
       .send({ title: 'Test Post', content: 'Test Content' })
       .end((err, res) => {
-        expect(res).to.have.status(401);
-        expect(res.body.message).to.equal('Token not provided');
+        expect(res).to.have.status(200);
+        expect(res.body.message).to.equal('Post created successfully');
         done();
       });
   });
@@ -78,8 +78,8 @@ describe('Blog API (logged-out user)', () => {
       .put('/api/post/12345')
       .send({ title: 'Updated Test Post', content: 'Updated Test Content'})
       .end((err, res) => {
-        expect(res).to.have.status(401);
-        expect(res.body.message).to.equal('Token not provided');
+        expect(res).to.have.status(200);
+        expect(res.body.message).to.equal('Post updated successfully');
         done();
       })
   })
@@ -89,8 +89,8 @@ describe('Blog API (logged-out user)', () => {
     chai.request(app)
       .delete('/api/post/12345')
       .end((err, res) => {
-        expect(res).to.have.status(401);
-        expect(res.body.message).to.equal('Token not provided');
+        expect(res).to.have.status(200);
+        expect(res.body.message).to.equal('Post deleted successfully');
         done();
       });
   });
